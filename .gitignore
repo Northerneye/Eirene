@@ -1,0 +1,5 @@
+# RSA Keys
+*.pem
+
+# The blockchain json file
+chain.json
