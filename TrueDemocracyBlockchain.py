@@ -15,7 +15,7 @@ from Crypto.Signature import pkcs1_15
 from Crypto.Hash import SHA256
 
 global voting_period
-voting_period = 600#3600 #One Hour
+voting_period = 120#600#3600 #One Hour
 
 def get_ip():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -467,13 +467,11 @@ class Blockchain:
 
         #Remove all laws that have been voted on up to the last voting cycle
         for block in self.get_chain()["chain"]:
-            if(self.get_voting_cycle(float(block["timestamp"])) >= voting_cycle):
-                break
-            for item in block["transactions"]:
-                if(item["Type"] == "Vote"):
-                    if(item["Hash"] in proposed_laws):
-                        proposed_laws.remove(item["Hash"])
-
+            if(self.get_voting_cycle(float(block["timestamp"])) < voting_cycle):
+                for item in block["transactions"]:
+                    if(item["Type"] == "Vote"):
+                        if(item["Hash"] in proposed_laws):
+                            proposed_laws.remove(item["Hash"])
         return proposed_laws
     
     def get_proposed_laws_text(self, voting_cycle=None):
@@ -530,6 +528,7 @@ class Blockchain:
         '''
         Takes a timestamp as input and returns the integer voting cycle of that timestamp
         '''
+        global voting_period
         voting_start = float(self.get_chain()["chain"][0]["timestamp"])
         return math.floor((float(timestamp) - voting_start)/voting_period)
     
@@ -539,6 +538,9 @@ class Blockchain:
 
         Gets all proposed laws and sees which has the highest pcoin value
         '''
+        if(voting_cycle is None): # If voting cycle isnt specified then assume its the latest cycle
+            voting_cycle = self.get_voting_cycle(float(self.get_chain()["chain"][-1]["timestamp"]))
+
         #Get all proposed laws
         laws_pcoin = {}
         proposed_laws = self.get_proposed_laws(voting_cycle=voting_cycle) 
@@ -547,9 +549,7 @@ class Blockchain:
         for law in proposed_laws:
             laws_pcoin[law] = 0 
         for block in self.get_chain()["chain"]:
-            if(voting_cycle != None and self.get_voting_cycle(float(block["timestamp"])) > voting_cycle):
-                break
-            else:
+            if(self.get_voting_cycle(float(block["timestamp"])) < voting_cycle):
                 for item in block["transactions"]:
                     if(item["Type"] == "PCoin"):
                         if(item["Hash"] in proposed_laws):
@@ -558,7 +558,7 @@ class Blockchain:
         #Get the law with the highest pcoin value
         if(len(laws_pcoin) == 0):
             return None
-        return max(laws_pcoin, key=laws_pcoin.get)
+        return max(zip(laws_pcoin.values(), laws_pcoin.keys()))[1]
     
     def get_current_law_text(self, voting_cycle=None):
         '''
@@ -591,7 +591,7 @@ class Blockchain:
         #Get the law with the highest pcoin value
         if(len(laws_pcoin) == 0):
             return "", "", ""
-        current_law = max(laws_pcoin, key=laws_pcoin.get)
+        current_law = max(zip(laws_pcoin.values(), laws_pcoin.keys()))[1]
         return short_text[current_law], legal_text[current_law], laws_pcoin[current_law]
     
     def get_pcoin_balance(self, ID=None):
