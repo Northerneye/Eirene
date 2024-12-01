@@ -818,7 +818,10 @@ class Blockchain:
             if(check_hash):
                 #Make sure the hash on each chain is valid AND that the last_hash value is correct
                 if(block["previous_hash"] != last_hash):
+                    print()
                     print("Chain adoption failure 1.5 - Previous hash does not match real value")
+                    print("Last Hash: "+str(last_hash))
+                    print("Marked Previous Hash: "+str(block["previous_hash"]))
                     return False
                 block_copy = block.copy()
                 hash_value = block_copy.pop("hash")

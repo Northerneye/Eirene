@@ -632,6 +632,8 @@ class Eirene(MDApp):
             if(search_string.text == ""):
                 viewing_proposed_laws_short = proposed_laws_short[:]
                 viewing_proposed_laws_legal = proposed_laws_legal[:]
+                viewing_proposed_laws_hash = proposed_laws_hash[:]
+                viewing_proposed_laws_pcoin = proposed_laws_pcoin[:]
             else:
                 for i in range(len(viewing_proposed_laws_short)):
                     viewing_proposed_laws_short.pop()
@@ -726,24 +728,14 @@ class Eirene(MDApp):
                     IPList.append(ip_text.text)
                     with open("ip_list.json", "w") as file:
                         json.dump({"IPs": IPList}, file, indent=4)
-                res = blockchain.update_with_miner(ip_text.text)
-                blockchain.save()
                 
                 self.go_home(*args)
-                if(res):
-                    return Snackbar(
-                        text="Chain Adopted",
-                        snackbar_x="10dp",
-                        snackbar_y="10dp",
-                        size_hint_x=.5
-                    ).open()
-                else:
-                    return Snackbar(
-                        text="Invalid Chain!",
-                        snackbar_x="10dp",
-                        snackbar_y="10dp",
-                        size_hint_x=.5
-                    ).open()
+                return Snackbar(
+                    text="IP Address Added!",
+                    snackbar_x="10dp",
+                    snackbar_y="10dp",
+                    size_hint_x=.5
+                ).open()
             return func
 
         submit_button = MDRaisedButton(text="Connect", pos_hint={"center_x": 0.5, "center_y": .6})
