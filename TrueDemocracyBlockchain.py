@@ -789,7 +789,10 @@ class Blockchain:
         '''
         global voting_period
         if(chain["length"] < self.get_chain()["length"]):
-            print("Chain adoption failure 1")
+            print()
+            print("Chain adoption failure 1 - Current Chain is Longer")
+            print("My Chain Length: "+str(self.get_chain()["length"]))
+            print("Their Chain Length: "+str(chain["length"]))
             return False
         
         # If ccoin key has not yet been announced in this chain or in the transactions then submit it
@@ -820,18 +823,27 @@ class Blockchain:
                 block_copy = block.copy()
                 hash_value = block_copy.pop("hash")
                 if(hash_value != sha256(json.dumps(block_copy, sort_keys=True).encode()).hexdigest()):#Compute the hash and compare it with the advertised value
+                    print()
                     print("Chain adoption failure 1.6 - Advertised block hash value does not match actual hash")
+                    print(hash_value)
                 last_hash = sha256(json.dumps(block_copy, sort_keys=True).encode()).hexdigest()
             
             #Have to incriment the index each time a block is added
             if(block["index"] != last_index + 1):
+                print()
                 print("Chain adoption failure 1.8 - Index is wrong")
+                print("Last Index: "+str(last_index))
+                print("Index: "+str(block["index"]))
                 return False
             last_index += 1
 
             #The Timestamps of each hash have to go forward in time, also no hashes from the future
             if(float(block["timestamp"]) < last_time or float(block["timestamp"]) > time.time()):
+                print()
                 print("Chain adoption failure 2 - Block timestamps are wrong")
+                print("Last Block Time: "+str(last_time))
+                print("Block Time: "+str(block["timestamp"]))
+                print("Current Clock Time: "+str(time.time()))
                 return False
                 
             #Next we need to check the transactions inside each block
@@ -839,34 +851,45 @@ class Blockchain:
                 #Check if this transaction is duplicated
                 for trans in all_transactions:
                     if(item == trans):#if this item is duplicated
+                        print()
                         print("Chain adoption failure 2.5 - duplicated transaction\n")
-                        print(trans)
+                        print(item)
                         return False
                 all_transactions.append(item)
 
                 #Verify the signature of each law
                 if(item["Type"] == "Law"):
                     if(not verify(item["Short Text"]+item["Legal Text"], item["Signature"], item["ID"])):
+                        print()
                         print("Chain adoption failure 3 - Law signature forged")
+                        print(item)
                         return False
                     
                 #Verify the signature of each vote
                 if(item["Type"] == "Vote"):
                     if(not verify(str(item["Vote"])+str(item["Timestamp"])+str(item["Hash"])+str(item["Comment"])+str(item["Like"]), item["Signature"], item["ID"])):
+                        print()
                         print("Chain adoption failure 5 - Vote signature forged")
+                        print(item)
                         return False
                     if(not(item["Vote"] == 1 or item["Vote"] == -1)):#No increasing the vote amount
+                        print()
                         print("Chain adoption failure 7 - Vote value is not 1 or -1")
+                        print(item)
                         return False
                     if(item["ID"] in I_VOTED): #No Double Voting
+                        print()
                         print("Chain adoption failure 8 - Double voting")
+                        print(item)
                         return False
                     I_VOTED.append(item["ID"])#If it is a valid vote, add their ID to the voting registration for this round
 
                 if(item["Type"] == "CCoin"):
                     #Verify each CCoin transaction is legitimate
                     if(not verify(str(item["To"])+str(item["Amount"])+str(item["Time"]), item["Signature"], item["From"])):
+                        print()
                         print("Chain adoption failure 9 - CCoin transaction forged")
+                        print(item)
                         return False
                     
                     #Make sure they are not over-spending
@@ -874,13 +897,19 @@ class Blockchain:
                         CCoin_Accounts[item["From"]] -= float(item["Amount"])
                         CCoin_Accounts[item["To"]] += float(item["Amount"])
                         if(item["Amount"] < 0):#No Stealing
+                            print()
                             print("Chain adoption failure 10 - CCoin transaction stealing")
+                            print(item)
                             return False
                         if(CCoin_Accounts[item["From"]] < 0):
+                            print()
                             print("Chain adoption failure 11 - Individual does not have enough money for CCoin Transaction")
+                            print(item)
                             return False
                     else:
+                        print()
                         print("Chain adoption failure 12 - Individual has not announced CCoin public key")
+                        print(item)
                         return False
                     
                 if(item["Type"] == "CCoin Public Key"):
@@ -891,20 +920,28 @@ class Blockchain:
                 if(item["Type"] == "PCoin"):
                     #Verify each CCoin transaction is legitimate
                     if(not verify(str(item["Hash"])+str(item["Amount"])+str(item["Time"]), item["Signature"], item["ID"])):
+                        print()
                         print("Chain adoption failure 12.1 - PCoin transaction forged")
+                        print(item)
                         return False
                     
                     #Make sure they are not over-spending
                     if(item["ID"] in PCoin_Accounts.keys()):
                         PCoin_Accounts[item["ID"]] -= float(item["Amount"])
                         if(item["Amount"] < 0):#No Stealing
+                            print()
                             print("Chain adoption failure 12.2 - PCoin transaction stealing")
+                            print(item)
                             return False
                         if(PCoin_Accounts[item["ID"]] < 0):
+                            print()
                             print("Chain adoption failure 12.3 - Individual does not have enough money for PCoin Transaction")
+                            print(item)
                             return False
                     else:
+                        print()
                         print("Chain adoption failure 12.4 - Individual has not announced PCoin public key")
+                        print(item)
                         return False
                     
                 if(item["Type"] == "PCoin Public Key"):
@@ -921,17 +958,23 @@ class Blockchain:
                     if(str(block["index"]) == "0"):
                         PCoin_Accounts[item["To"]] = float(item["Amount"])
                     else:
+                        print()
                         print("Chain adoption failure 12.5 - Initial PCoin found out of place")
+                        print(item)
                         return False
                     
                 if(item["Type"] == "Mining"):
                     if(round_mined):
+                        print()
                         print("Chain adoption failure 13 - miner was rewarded multiple times")
+                        print(item)
                         return False
                     else:
                         round_mined = True
                     if(int(item["Amount"]) != 1):
+                        print()
                         print("Chain adoption failure 13.1 - Miner is unfairly compenstated")
+                        print(item)
                         return False
                 
             
@@ -965,13 +1008,19 @@ class Blockchain:
                             if(item["ID"] in IDS):
                                 IDS.remove(item["ID"])
                             else:
-                                print("Chain adoption failure 13.1 - Individual has not announced PCoin public key")
+                                print()
+                                print("Chain adoption failure 13.1.5 - Individual has not announced PCoin public key")
+                                print(item)
                                 return False
                         else:
+                            print()
                             print("Chain adoption failure 13.2 - unequal PCoin redistribution")
+                            print(item)
                             return False
                 if(len(IDS) > 0 and check_hash):#Needs to be turned off when used in check_transactions() - with check_hash=False
+                    print()
                     print("Chain adoption failure 13.3 - Individuals have not been given PCoin after vote")
+                    print("Problematic Block Timestamp: "+str(block["timestamp"]))
                     return False
                 
             

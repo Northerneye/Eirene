@@ -865,7 +865,7 @@ if(os.path.exists("ip_list.json")):
     IPList = new_chain["IPs"]
 else:
     IPList = []
-def miner_update_loop(*args):
+def updater_loop(*args):
     while(True):
         for ipaddress in IPList:
             try:
@@ -876,7 +876,7 @@ def miner_update_loop(*args):
                 print("Update FAILED for IP="+str(ipaddress))
         time.sleep(10)
 
-updater_thread = threading.Thread(target=miner_update_loop)
+updater_thread = threading.Thread(target=updater_loop)
 updater_thread.start()
                 
 # Run Eirene App
