@@ -15,7 +15,7 @@ from Crypto.Signature import pkcs1_15
 from Crypto.Hash import SHA256
 
 global voting_period
-voting_period = 120#600#3600 #One Hour
+voting_period = 600#3600 #One Hour
 
 def get_ip():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -437,7 +437,7 @@ class Blockchain:
         passed_short_text = {}
         passed_legal_text = {}
         for law, vote in votes.items():
-            if(vote > 0):
+            if( law is not None and vote > 0):
                 passed_short_text[law] = short_text[law]
                 passed_legal_text[law] = legal_text[law]
 

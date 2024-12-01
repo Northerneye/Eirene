@@ -357,12 +357,12 @@ class Eirene(MDApp):
             def func(*args):
                 blockchain.vote(1, str(searchbar.text))
                 self.go_home(*args)
-                return Snackbar(
-                    text="You have voted yes",
-                    snackbar_x="10dp",
-                    snackbar_y="10dp",
-                    size_hint_x=.3
-                ).open()
+                #return Snackbar(
+                #    text="You have voted yes",
+                #    snackbar_x="10dp",
+                #    snackbar_y="10dp",
+                #    size_hint_x=.3
+                #).open()
             return func
         yes_button.bind(on_release=yes_snackbar(self))
         myscreen.add_widget(yes_button)
@@ -372,12 +372,12 @@ class Eirene(MDApp):
             def func(*args):
                 blockchain.vote(-1, str(searchbar.text))
                 self.go_home(*args)
-                return Snackbar(
-                    text="You have voted no",
-                    snackbar_x="10dp",
-                    snackbar_y="10dp",
-                    size_hint_x=.5
-                ).open()
+                #return Snackbar(
+                #    text="You have voted no",
+                #    snackbar_x="10dp",
+                #    snackbar_y="10dp",
+                #    size_hint_x=.5
+                #).open()
             return func
         no_button.bind(on_release=no_snackbar(self))
         myscreen.add_widget(no_button)
@@ -418,20 +418,20 @@ class Eirene(MDApp):
         def func(*args):
             res = blockchain.ccoin_transaction(account_bar.text, ccoin_bar.text)
             self.go_home(*args)
-            if(res):
-                return Snackbar(
-                    text="You have issued the transaction",
-                    snackbar_x="10dp",
-                    snackbar_y="10dp",
-                    size_hint_x=.5
-                ).open()
-            else:
-                return Snackbar(
-                    text="The transaction failed. Check account balance.",
-                    snackbar_x="10dp",
-                    snackbar_y="10dp",
-                    size_hint_x=.5
-                ).open()
+            #if(res):
+            #    return Snackbar(
+            #        text="You have issued the transaction",
+            #        snackbar_x="10dp",
+            #        snackbar_y="10dp",
+            #        size_hint_x=.5
+            #    ).open()
+            #else:
+            #    return Snackbar(
+            #        text="The transaction failed. Check account balance.",
+            #        snackbar_x="10dp",
+            #        snackbar_y="10dp",
+            #        size_hint_x=.5
+            #    ).open()
         return func
     
     def Established_Law_Search_Page(self):
@@ -596,19 +596,20 @@ class Eirene(MDApp):
                         print(hash)
                         donation_amount = donate_field.text
                         donate_field.text = ""
-                        return Snackbar(
-                            text="You have donated: "+str(donation_amount),
-                            snackbar_x="10dp",
-                            snackbar_y="10dp",
-                            size_hint_x=.3
-                        ).open()
-                    else:
-                        return Snackbar(
-                            text="Error... Please check your pcoin balance",
-                            snackbar_x="10dp",
-                            snackbar_y="10dp",
-                            size_hint_x=.3
-                        ).open()
+                    #    return Snackbar(
+                    #        text="You have donated: "+str(donation_amount),
+                    #        snackbar_x="10dp",
+                    #        snackbar_y="10dp",
+                    #        size_hint_x=.3
+                    #    ).open()
+                    #else:
+                    #    True
+                    #    return Snackbar(
+                    #        text="Error... Please check your pcoin balance",
+                    #        snackbar_x="10dp",
+                    #        snackbar_y="10dp",
+                    #        size_hint_x=.3
+                    #    ).open()
                 return func
             donate_button.bind(on_release=donate(self, donate_field, viewing_proposed_laws_hash[i]))
             local_layout.add_widget(donate_button)
@@ -685,20 +686,20 @@ class Eirene(MDApp):
         def func(*args):
             res = blockchain.draft_law(short_text.text, law_text.text)
             self.go_home(*args)
-            if(res):
-                return Snackbar(
-                    text="You have submitted the law",
-                    snackbar_x="10dp",
-                    snackbar_y="10dp",
-                    size_hint_x=.5
-                ).open()
-            else:
-                return Snackbar(
-                    text="The submission failed!",
-                    snackbar_x="10dp",
-                    snackbar_y="10dp",
-                    size_hint_x=.5
-                ).open()
+            #if(res):
+            #    return Snackbar(
+            #        text="You have submitted the law",
+            #        snackbar_x="10dp",
+            #        snackbar_y="10dp",
+            #        size_hint_x=.5
+            #    ).open()
+            #else:
+            #    return Snackbar(
+            #        text="The submission failed!",
+            #        snackbar_x="10dp",
+            #        snackbar_y="10dp",
+            #        size_hint_x=.5
+            #    ).open()
         return func
     
 
@@ -726,16 +727,16 @@ class Eirene(MDApp):
                 global IPList
                 if(ip_text.text not in IPList):
                     IPList.append(ip_text.text)
-                    with open("ip_list.json", "w") as file:
-                        json.dump({"IPs": IPList}, file, indent=4)
-                
+                    f = open("ip_list.json", "w")
+                    json.dump({"IPs": IPList}, f, indent=4)
+                    f.close()
                 self.go_home(*args)
-                return Snackbar(
-                    text="IP Address Added!",
-                    snackbar_x="10dp",
-                    snackbar_y="10dp",
-                    size_hint_x=.5
-                ).open()
+                #return Snackbar(
+                #    text="IP Address Added!",
+                #    snackbar_x="10dp",
+                #    snackbar_y="10dp",
+                #    size_hint_x=.5
+                #).open()
             return func
 
         submit_button = MDRaisedButton(text="Connect", pos_hint={"center_x": 0.5, "center_y": .6})
@@ -756,12 +757,12 @@ class Eirene(MDApp):
                         blockchain.mine()
             t1 = threading.Thread(target=func)
             t1.start()
-            return Snackbar(
-                text="Served",
-                snackbar_x="10dp",
-                snackbar_y="10dp",
-                size_hint_x=.3
-            ).open()
+            #return Snackbar(
+            #    text="Served",
+            #    snackbar_x="10dp",
+            #    snackbar_y="10dp",
+            #    size_hint_x=.3
+            #).open()
         server_button.bind(on_release=server)
         myscreen.add_widget(server_button)
         
