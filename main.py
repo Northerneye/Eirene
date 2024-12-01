@@ -37,6 +37,7 @@ import socket
 import threading
 import json
 import time
+import os
 
 import TrueDemocracyBlockchain as tdm
 
@@ -720,15 +721,14 @@ class Eirene(MDApp):
 
         def new_connection(ip_text):
             def func(*args):
-                def func1(*args):
-                    while(True):
-                        blockchain.update_with_miner(ip_text.text)
-                        blockchain.save()
-                        time.sleep(10)
+                global IPList
+                if(ip_text.text not in IPList):
+                    IPList.append(ip_text.text)
+                    with open("ip_list.json", "w") as file:
+                        json.dump({"IPs": IPList}, file, indent=4)
                 res = blockchain.update_with_miner(ip_text.text)
                 blockchain.save()
-                t1 = threading.Thread(target=func1)
-                t1.start()
+                
                 self.go_home(*args)
                 if(res):
                     return Snackbar(
@@ -856,5 +856,29 @@ class Eirene(MDApp):
         self.navigation_drawer.set_state("open")
 
 
+# Start blockchain update thread in background
+if(os.path.exists("ip_list.json")):
+    f = open("ip_list.json", "r")
+    new_chain = json.loads(f.read())
+    f.close()
+    print(new_chain["IPs"])
+    IPList = new_chain["IPs"]
+else:
+    IPList = []
+def miner_update_loop(*args):
+    while(True):
+        for ipaddress in IPList:
+            try:
+                res = blockchain.update_with_miner(ipaddress)
+                blockchain.save()
+                print("Update from IP="+str(ipaddress)+" "+str(res))
+            except:
+                print("Update FAILED for IP="+str(ipaddress))
+        time.sleep(10)
+
+updater_thread = threading.Thread(target=miner_update_loop)
+updater_thread.start()
+                
+# Run Eirene App
 EireneApp = Eirene()
 EireneApp.run()

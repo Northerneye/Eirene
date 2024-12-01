@@ -3,3 +3,7 @@
 
 # The blockchain json file
 chain.json
+ip_list.json
+
+# Disregard all __pycache__
+__pycache__
