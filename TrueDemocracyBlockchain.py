@@ -995,7 +995,7 @@ class Blockchain:
                     if(self.get_voting_cycle(last_time) == self.get_voting_cycle(float(local_block["timestamp"]))):
                         for local_item in local_block["transactions"]:
                             if(local_item["Type"] == "Vote"):
-                                IDS.append(item["ID"])
+                                IDS.append(local_item["ID"])
 
                 #Get the pcoin value of the last law to redistribute
                 short, legal, pcoin = self.get_current_law_text(self.get_voting_cycle(last_time))
