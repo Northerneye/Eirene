@@ -1,4 +1,4 @@
-This project contains the code for a Kivy App which creates a prototype of secure way for citizens to both draft and vote on legislation, without the need for intermediate representatives.  This is a generalization of blockchain technology to legislation, which notably has previously been used for voting. 
+This project contains the code for a Kivy App which creates a prototype of secure way for citizens to both draft and vote on legislation, without the need for intermediate representatives.  This is a generalization of blockchain technology to legislation, which notably has previously been limited for use only in voting, example "Exploring the potential of blockchain technology for citizen engagement in smart governance"(Testi et al. 2023). 
 
 
 # Blockchain citizen legistation system
