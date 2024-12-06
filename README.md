@@ -64,7 +64,7 @@ The current code for this prototype of blockchain legislation is minimalist.  Ex
 5. Citizen No Confidence Vote - In the case of representative abuse of power, citizens could vote to enter an emergency mode of the blockchain protocol, where laws are passed more quickly to help citizens organize against threats to their democracy.
 6. Citizen Comments For and Against Legislation - Citizens can comment on legislation as they vote on it, to provide evidence for their view.  Additionally citizens can upvote helpful comments for others to see useful evidence.
 7. QR Codes for checking their vote on other citizens devices - Allow for citizens to validate that their vote has made it to another individual's device and is being counted.
-
+8. Politically Distributed Mining - A Consensus algorithm which increases the difficulty of hashing for a group based on how often the individuals in those groups have added blocks to the chain (possibly by an exponentially weighted mean).
 
 <br/><br/>
 
